@@ -13,3 +13,11 @@ hs_err_pid*
 /bin
 .classpath
 .project
+
+
+# tmp_files
+*~
+h*/
+
+#mattis
+emacsMakefile
