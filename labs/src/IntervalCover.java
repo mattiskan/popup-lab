@@ -9,20 +9,13 @@ import java.util.List;
  * @author Mattis Kancans Envall mattiske@kth.se
  */
 public class IntervalCover {
+	
 	private Interval goal;
 	private List<Interval> list;
 	private double nextLimit;
 	private List<Interval> solution;
 	private int nextIndex;
 
-	public static void main(String[] args) {
-		Kattio io = new Kattio(System.in);
-		do {
-			IntervalCover instance = getNextInstance(io);
-			solveAndPrintResult(instance, io);
-		} while (io.hasMoreTokens());
-		io.flush();
-	}
 	
 	private IntervalCover(Interval goal, List<Interval> list) {
 		this.goal = goal;
@@ -31,41 +24,48 @@ public class IntervalCover {
 	}
 
 	public int[] solve() {
+		print();
+		print("goal", goal);
+		
 		Collections.sort(list);
+		
 		nextLimit = goal.start;
 		nextIndex = 0;
+		
+		for(Interval i : list)
+			print(i);
+		
 		while (!isNotCovered()) {
-			if (solveNext())
-				break;
+			Interval next = findNext();
+			if(next != null)
+				solution.add(next);
+			else
+				return new int[0]; // impossible
 		}
 		return getSolution();
 	}
 
-	private boolean solveNext() {
-		Interval best = list.get(nextIndex);
-		if (nextIndex+1 == list.size() && best.stop >= goal.stop) {
-			print("lastbest");
-			solution.add(best);
-			return true;
-		}
+	private Interval findNext() {
+		print("passing", nextLimit);
 		
-		for (int i= nextIndex+1; i<list.size(); i++) {
-			Interval current = list.get(i);
+		Interval best = null;
+
+		for( ; nextIndex<list.size(); nextIndex++){
+			Interval current = list.get(nextIndex);
+
+			if (current.start > nextLimit)
+				break;
 			
-			if (current.start > nextLimit) {
-				print("found", best);
-				solution.add(best);
-				nextLimit = best.stop;
-				nextIndex = i;
-				return false;
+			if(best == null || current.stop > best.stop){
+				best = current;
 			}
 			
-			if (current.stop > best.stop)
-				best = current;
 		}
-		print("no solution");
-		solution.clear();
-		return true;
+		if (best != null)
+			nextLimit = best.stop;
+		
+		print("best", best);
+		return best;
 	}
 
 	private boolean isNotCovered() {
@@ -79,6 +79,38 @@ public class IntervalCover {
 			solutionIndexes[i] = solution.get(i).index;
 		}
 		return solutionIndexes;
+	}
+
+	private static class Interval implements Comparable<Interval> {
+		public final int index;
+		public final double start, stop;
+
+		public Interval(int index, double start, double stop) {
+			this.start = start;
+			this.stop = stop;
+			this.index = index;
+		}
+
+		@Override
+		public int compareTo(Interval o) {
+			return (int) Math.signum(this.start - o.start);
+		}
+		@Override
+		public String toString() {
+			return String.format("[%f, %f]", start, stop);
+		}
+	}
+	
+	/**
+	 * Solver for https://kth.kattis.com/problems/intervalcover
+	 */
+	public static void main(String[] args) {
+		Kattio io = new Kattio(System.in);
+		do {
+			IntervalCover instance = getNextInstance(io);
+			solveAndPrintResult(instance, io);
+		} while (io.hasMoreTokens());
+		io.flush();
 	}
 
 	private static IntervalCover getNextInstance(Kattio io) {
@@ -108,27 +140,8 @@ public class IntervalCover {
 		}
 		io.println();
 	}
-
-	private static class Interval implements Comparable<Interval> {
-		public final int index;
-		public final double start, stop;
-
-		public Interval(int index, double start, double stop) {
-			this.start = start;
-			this.stop = stop;
-			this.index = index;
-		}
-
-		@Override
-		public int compareTo(Interval o) {
-			return (int) Math.signum(this.start - o.start);
-		}
-		@Override
-		public String toString() {
-			return String.format("[%f, %f]", start, stop);
-		}
-	}
-
+	
+	
 	private static final boolean DEBUG = false;
 
 	private static void print(Object... args) {
