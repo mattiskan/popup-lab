@@ -37,7 +37,7 @@ public class IntervalCover {
 		
 		while (!isNotCovered()) {
 			Interval next = findNext();
-			if(next != null)
+			if(next == null)
 				solution.add(next);
 			else
 				return new int[0]; // impossible
@@ -49,7 +49,6 @@ public class IntervalCover {
 		print("passing", nextLimit);
 		
 		Interval best = null;
-
 		for( ; nextIndex<list.size(); nextIndex++){
 			Interval current = list.get(nextIndex);
 
