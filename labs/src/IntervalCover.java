@@ -27,6 +27,9 @@ public class IntervalCover {
 		print();
 		print("goal", goal);
 		
+		if (goal.start == goal.stop)
+			return onePointSolution();
+		
 		Collections.sort(list);
 		
 		nextLimit = goal.start;
@@ -43,6 +46,15 @@ public class IntervalCover {
 			solution.add(next);
 		}
 		return getSolution();
+	}
+	
+	private int[] onePointSolution () {
+		for(Interval i : list){
+			if(i.start <= goal.start 
+					&& i.stop >= goal.start) // goal.start == goal.stop
+				return new int[] { i.index };
+		}
+		return new int[0];
 	}
 
 	private Interval findNext() {
