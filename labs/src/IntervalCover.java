@@ -38,9 +38,9 @@ public class IntervalCover {
 		while (!isNotCovered()) {
 			Interval next = findNext();
 			if(next == null)
-				solution.add(next);
-			else
 				return new int[0]; // impossible
+			
+			solution.add(next);
 		}
 		return getSolution();
 	}
@@ -104,6 +104,9 @@ public class IntervalCover {
 	 * Solver for https://kth.kattis.com/problems/intervalcover
 	 */
 	public static void main(String[] args) {
+		if(args.length >= 1)
+			debug = Boolean.parseBoolean(args[0]);
+		
 		Kattio io = new Kattio(System.in);
 		do {
 			IntervalCover instance = getNextInstance(io);
@@ -141,10 +144,10 @@ public class IntervalCover {
 	}
 	
 	
-	private static final boolean DEBUG = false;
+	private static boolean debug = false;
 
 	private static void print(Object... args) {
-		if (!DEBUG)
+		if (!debug)
 			return;
 		for (Object s : args){
 			System.out.print(s);
