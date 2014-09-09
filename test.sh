@@ -108,9 +108,9 @@ for test in $foundTests; do
 	echo -e "${red}failed${end}"
 	if [ "$showDiff" = true ]; then
 	    echo "got:"
-	    cat $ans | sed "s/^/    /"
-	    echo -e "\nexpected:"
 	    cat .res | sed "s/^/    /"
+	    echo -e "\nexpected:"
+	    cat $ans | sed "s/^/    /"
 	fi
 	if [ "$stopOnError" = true ]; then
 	    exit 1;
