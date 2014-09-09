@@ -29,26 +29,14 @@ yellow='\e[0;33m'
 green='\e[0;32m'
 end='\e[0m' #stop coloring
 
-testDir="test"
+testDir="tests"
 bin="bin"
-while getopts ":t:b" opt; do
+while getopts ":ht:b:" opt; do
     case $opt in
-	t)
-	    testDir="${OPTARG%*/}"
-	    if [ ! -d $testDir ]; then
-		echo "$testDir/ doesn't exists"; exit 1;
-	    fi
-	    ;;
-	b)
-	    bin="${OPTARG%*/}"
-	    if [ ! -d $OPTARG ]; then
-		echo "class path doesn't exist"; exit 1;
-	    fi
-	    ;;
+	t) testDir="${OPTARG%*/}";;
+	b) bin="${OPTARG%*/}";;
 
-	h)
-	    echo "$usage"; exit 1;;
-	
+	h) echo "$usage"; exit 1;;
 	# errors:
 	?)
 	    echo "Error: Invalid argument -$OPTARG"
@@ -60,16 +48,21 @@ done
 
 shift `expr $OPTIND - 1` # remove flags
 
-
+for dir in $testDir $bin; do
+    if [ ! -d $dir ]; then
+	echo "Required directory $dir/ doesn't exist"; exit 1;
+    fi
+done
 
 mainClass="${@: -1}"
 mainFile="$bin/$mainClass.class"
 if [ $# -eq 0 ]; then
     echo "Missing MainFile"
     echo "usage: test.sh [options] <MainFile>"
+    echo ""
     echo "See test.sh -h for more information"
 elif [ ! -r $mainFile ]; then
-    echo "$mainFile does not exist"; exit 1
+    echo "MainFile $mainFile does not exist"; exit 1
 fi
 
 runTest="java -cp $bin $mainClass false"
