@@ -83,7 +83,7 @@ elif [ ! -r $mainFile ]; then
     echo "MainFile $mainFile does not exist"; exit 1
 fi
 
-run="java -cp $bin $mainClass false"
+run="java -cp $bin $mainClass true"
 foundTests=`ls "$testDir/"{"$mainClass/",''}$tests 2> /dev/null | grep -v \~`
 
 for test in $foundTests; do
